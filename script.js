@@ -77,7 +77,6 @@ movements.forEach(function(mov, i) {
         containerMovements.insertAdjacentHTML('afterbegin', html)
 });
 }
-displayMovements(account1.movements)
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -87,12 +86,38 @@ const currencies = new Map([
   ['EUR', 'Euro'],
   ['GBP', 'Pound sterling'],
 ]);
-
+// Test data
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 const eurToUsd = 1.1
-
 const movementsUSD = movements.map(mov => mov = eurToUsd)
-const teste = "tentando subir no git"
+
+
+const calcDisplayBalance = function(movements) {
+const balance = movements.reduce((acc, cur) => acc + cur, 0);
+labelBalance.textContent = `${balance} EUR`
+}
+
+//Call Displays
+displayMovements(account1.movements)
+calcDisplayBalance(account1.movements)
+
+//Create usernames
+const createUsernames = function(accs){
+accs.forEach(function(acc){
+  acc.username = acc.owner
+    .toLocaleLowerCase()
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+})
+};
+createUsernames(accounts)
+
+const biggestMove = movements.reduce(function(acc, cur, i) {
+  if(cur > acc) acc = cur
+  return acc
+}, movements[0])
+
 
 /////////////////////////////////////////////////
 

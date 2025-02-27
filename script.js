@@ -93,42 +93,9 @@ const movementsUSD = movements.map(mov => mov = eurToUsd)
 
 // calc and display balance
 const calcDisplayBalance = function(movements) {
-const balance = movements.reduce((acc, cur) => acc + cur, 0);
-labelBalance.textContent = `${balance} EUR`
+  const balance = movements.reduce((acc, cur) => acc + cur, 0);
+  labelBalance.textContent = `${balance} EUR`
 }
-
-//calc and display all summary
-const displaySummary = function(movements){
-const incomes = movements
-.filter(mov => mov > 0)
-.reduce((acc, mov) => acc + mov, 0)
-labelSumIn.textContent = `${incomes}€`
-
-const out = movements
-.filter(mov => mov < 0)
-.reduce((acc, mov) => acc + mov, 0)
-labelSumOut.textContent = `${Math.abs(out)}€`
-
-
-}
-
-//Call Displays
-displayMovements(account1.movements)
-calcDisplayBalance(account1.movements)
-displaySummary(account1.movements)
-
-//Create usernames
-const createUsernames = function(accs){
-accs.forEach(function(acc){
-  acc.username = acc.owner
-    .toLocaleLowerCase()
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-})
-};
-createUsernames(accounts)
-
 
 // calc all the deposits in usd
 const allDepositsUSD = function(movements){
@@ -143,3 +110,42 @@ const biggestMove = movements.reduce(function(acc, cur, i) {
 }, movements[0])
 console.log(allDepositsUSD(movements))
 
+//calc and display all summary
+const displaySummary = function(movements){
+  const incomes = movements
+.filter(mov => mov > 0)
+.reduce((acc, mov) => acc + mov, 0)
+labelSumIn.textContent = `${incomes}€`
+
+const out = movements
+.filter(mov => mov < 0)
+.reduce((acc, mov) => acc + mov, 0)
+labelSumOut.textContent = `${Math.abs(out)}€`
+
+const interest = movements
+.filter(mov => mov > 0)
+.map(deposit => (deposit* 1.2) / 100)
+.filter(int => int >= 1)
+.reduce((acc, int) => acc + int,0)
+labelSumInterest.textContent = `${interest}€` 
+}
+
+
+//Create usernames
+const createUsernames = function(accs){
+  accs.forEach(function(acc){
+    acc.username = acc.owner
+    .toLocaleLowerCase()
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+  })
+};
+createUsernames(accounts)
+
+
+
+//Call Displays
+displayMovements(account1.movements)
+calcDisplayBalance(account1.movements)
+displaySummary(account1.movements)

@@ -117,20 +117,20 @@ const biggestMove = movements.reduce(function(acc, cur, i) {
 }, movements[0])
 
 //calc and display all summary
-const displaySummary = function(movements){
-const incomes = movements
+const displaySummary = function(acc){
+const incomes = acc.movements
 .filter(mov => mov > 0)
 .reduce((acc, mov) => acc + mov, 0)
 labelSumIn.textContent = `${incomes}€`
 
-const out = movements
+const out = acc.movements
 .filter(mov => mov < 0)
 .reduce((acc, mov) => acc + mov, 0)
 labelSumOut.textContent = `${Math.abs(out)}€`
 
-const interest = movements
+const interest = acc.movements
 .filter(mov => mov > 0)
-.map(deposit => (deposit* 1.2) / 100)
+.map(deposit => (deposit* this.interestRate) / 100)
 .filter(int => int >= 1)
 .reduce((acc, int) => acc + int,0)
 labelSumInterest.textContent = `${interest}€` 
@@ -157,11 +157,13 @@ console.log(currentAccount)
 if(currentAccount?.pin === Number(inputLoginPin.value)) {
     //show 
     containerApp.style.opacity = 100
+    //clear input field
+    inputLoginPin = inputLoginUsername = " "
 
     //Call Displays
     displayMovements(currentAccount.movements)
     calcDisplayBalance(currentAccount.movements)
-    displaySummary(currentAccount.movements)
+    displaySummary(currentAccount)
 
     // welcome messages
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`

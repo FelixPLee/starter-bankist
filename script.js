@@ -71,19 +71,6 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 containerMovements.innerHTML = ''
 
-const displayMovements = function(movements) {
-movements.forEach(function(mov, i) {
-  const type = mov > 0 ? 'deposit' : 'withdrawal'
-  const html = `
-        <div class="movements__row">
-          <div class="movements__type movements__type--${type}">${i+1} ${type}</div>
-          <div class="movements__date">3 days ago</div>
-          <div class="movements__value">${mov}</div>
-        </div>
-        `
-        containerMovements.insertAdjacentHTML('afterbegin', html)
-});
-}
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -98,12 +85,6 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 const eurToUsd = 1.1
 const movementsUSD = movements.map(mov => mov = eurToUsd)
 
-// calc and display balance
-const calcDisplayBalance = function(movements) {
-  const balance = movements.reduce((acc, cur) => acc + cur, 0);
-  labelBalance.textContent = `${balance} EUR`
-}
-
 // calc all the deposits in usd
 const allDepositsUSD = function(movements){
   return movements.filter(mov => mov > 0)
@@ -116,26 +97,20 @@ const biggestMove = movements.reduce(function(acc, cur, i) {
   return acc
 }, movements[0])
 
-//calc and display all summary
-const displaySummary = function(acc){
-const incomes = acc.movements
-.filter(mov => mov > 0)
-.reduce((acc, mov) => acc + mov, 0)
-labelSumIn.textContent = `${incomes}€`
-
-const out = acc.movements
-.filter(mov => mov < 0)
-.reduce((acc, mov) => acc + mov, 0)
-labelSumOut.textContent = `${Math.abs(out)}€`
-
-const interest = acc.movements
-.filter(mov => mov > 0)
-.map(deposit => (deposit* this.interestRate) / 100)
-.filter(int => int >= 1)
-.reduce((acc, int) => acc + int,0)
-labelSumInterest.textContent = `${interest}€` 
+//Display movements
+const displayMovements = function(movements) {
+movements.forEach(function(mov, i) {
+  const type = mov > 0 ? 'deposit' : 'withdrawal'
+  const html = `
+        <div class="movements__row">
+          <div class="movements__type movements__type--${type}">${i+1} ${type}</div>
+          <div class="movements__date">3 days ago</div>
+          <div class="movements__value">${mov}</div>
+        </div>
+        `
+        containerMovements.insertAdjacentHTML('afterbegin', html)
+});
 }
-
 
 //Create usernames
 const createUsernames = function(accs){
@@ -149,6 +124,34 @@ const createUsernames = function(accs){
 };
 createUsernames(accounts)
 
+// calc and display balance
+const calcDisplayBalance = function(movements) {
+  const balance = movements.reduce((acc, cur) => acc + cur, 0);
+  labelBalance.textContent = `${balance} EUR`
+}
+
+//calc and display all summary
+const displaySummary = function(acc){
+  const incomes = acc.movements
+  .filter(mov => mov > 0)
+  .reduce((acc, mov) => acc + mov, 0)
+  labelSumIn.textContent = `${incomes}€`
+  
+  const out = acc.movements
+  .filter(mov => mov < 0)
+  .reduce((acc, mov) => acc + mov, 0)
+  labelSumOut.textContent = `${Math.abs(out)}€`
+  
+  const interest = acc.movements
+  .filter(mov => mov > 0)
+  .map(deposit => (deposit* acc.interestRate) / 100)
+  .filter(int => int >= 1)
+  .reduce((acc, int) => acc + int,0)
+labelSumInterest.textContent = `${interest}€` 
+}
+
+
+// LOGIN button
 btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
   
@@ -158,7 +161,7 @@ if(currentAccount?.pin === Number(inputLoginPin.value)) {
     //show 
     containerApp.style.opacity = 100
     //clear input field
-    inputLoginPin = inputLoginUsername = " "
+    inputLoginPin.value = inputLoginUsername.value = " "
 
     //Call Displays
     displayMovements(currentAccount.movements)
@@ -170,5 +173,9 @@ if(currentAccount?.pin === Number(inputLoginPin.value)) {
   }
 })
 
-//Call Displays
-
+btnTransfer.addEventListener('click', function(e){ 
+  e.preventDefault()
+  const amount = Number(inputTransferAmount.value)
+  const reciverAcc = accounts.find(acc => acc.username === inputTransferTo.value)
+  
+})

@@ -33,7 +33,14 @@ const account4 = {
   pin: 4444,
 };
 
-const accounts = [account1, account2, account3, account4];
+const account5 = {
+  owner: 'Felipe Arnt',
+  movements: [430, 1000, 700, 50, 90, 8000],
+  interestRate: 1,
+  pin: 4200,
+};
+
+const accounts = [account1, account2, account3, account4, account5];
 
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -108,11 +115,10 @@ const biggestMove = movements.reduce(function(acc, cur, i) {
   if(cur > acc) acc = cur
   return acc
 }, movements[0])
-console.log(allDepositsUSD(movements))
 
 //calc and display all summary
 const displaySummary = function(movements){
-  const incomes = movements
+const incomes = movements
 .filter(mov => mov > 0)
 .reduce((acc, mov) => acc + mov, 0)
 labelSumIn.textContent = `${incomes}€`
@@ -143,9 +149,24 @@ const createUsernames = function(accs){
 };
 createUsernames(accounts)
 
+btnLogin.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+ let currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+console.log(currentAccount)
+if(currentAccount?.pin === Number(inputLoginPin.value)) {
+    //show 
+    containerApp.style.opacity = 100
 
+    //Call Displays
+    displayMovements(currentAccount.movements)
+    calcDisplayBalance(currentAccount.movements)
+    displaySummary(currentAccount.movements)
+
+    // welcome messages
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
+  }
+})
 
 //Call Displays
-displayMovements(account1.movements)
-calcDisplayBalance(account1.movements)
-displaySummary(account1.movements)
+

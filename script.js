@@ -71,35 +71,13 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 containerMovements.innerHTML = ''
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
+//================================APLICATION================================//
 
-const currencies = new Map([
-  ['USD', 'United States dollar'],
-  ['EUR', 'Euro'],
-  ['GBP', 'Pound sterling'],
-]);
-// Test data
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-const eurToUsd = 1.1
-const movementsUSD = movements.map(mov => mov = eurToUsd)
 
-// calc all the deposits in usd
-const allDepositsUSD = function(movements){
-  return movements.filter(mov => mov > 0)
-  .map(mov => mov * eurToUsd)
-  .reduce((acc, mov) => acc + mov,0)
-}
-
-const biggestMove = movements.reduce(function(acc, cur, i) {
-  if(cur > acc) acc = cur
-  return acc
-}, movements[0])
-
+///////////DEFINING FUNCTIONS/////////////////
 //Display movements
 const displayMovements = function(movements) {
-movements.forEach(function(mov, i) {
+  movements.forEach(function(mov, i) {
   const type = mov > 0 ? 'deposit' : 'withdrawal'
   const html = `
         <div class="movements__row">
@@ -109,7 +87,7 @@ movements.forEach(function(mov, i) {
         </div>
         `
         containerMovements.insertAdjacentHTML('afterbegin', html)
-});
+      });
 }
 
 //Create usernames
@@ -147,66 +125,102 @@ const displaySummary = function(acc){
   .map(deposit => (deposit* acc.interestRate) / 100)
   .filter(int => int >= 1)
   .reduce((acc, int) => acc + int,0)
-labelSumInterest.textContent = `${interest}€` 
+  labelSumInterest.textContent = `${interest}€` 
 }
 
 //Call Displays 
 const updateUI = function(acc){
-displayMovements(acc.movements)
-calcDisplayBalance(acc)
-displaySummary(acc)}
-
-//defines curent Account active
-let currentAccount
-
-// LOGIN button+
-btnLogin.addEventListener('click', function(e) {
-  e.preventDefault();
+  displayMovements(acc.movements)
+  calcDisplayBalance(acc)
+  displaySummary(acc)}
   
-currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
-console.log(currentAccount)
-if(currentAccount?.pin === Number(inputLoginPin.value)) {
-    //show 
-    containerApp.style.opacity = 100
-    //clear input field
-    inputLoginPin.value = inputLoginUsername.value = " "
+  //defines curent Account active
+  let currentAccount
+  
+
+  ///////////LOGIN BTN/////////////////
+  btnLogin.addEventListener('click', function(e) {
+    e.preventDefault();
     
-    updateUI(currentAccount)
+    currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+    console.log(currentAccount)
+    if(currentAccount?.pin === Number(inputLoginPin.value)) {
+      //show 
+      containerApp.style.opacity = 100
+      //clear input field
+      inputLoginPin.value = inputLoginUsername.value = " "
+      
+      updateUI(currentAccount)
+      
+      // welcome messages
+      labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
+    }
+  })
+  
 
-    // welcome messages
-    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
-  }
+  
+  ///////////TRANSFER BTN/////////////////
+  btnTransfer.addEventListener('click', function(e){ 
+    e.preventDefault()
+    const amount = Number(inputTransferAmount.value)
+    const reciverAcc = accounts.find(acc => acc.username === inputTransferTo.value)
+    if (amount > 0 && currentAccount.balance >= amount && reciverAcc?.username) {
+      
+      //Transfer
+      currentAccount.movements.push(-amount)
+      reciverAcc.movements.push(amount)
+      
+      //uptade the UI
+      updateUI(currentAccount)
+      // blank the input forms
+      inputTransferTo.value = inputTransferAmount.value = " " 
+    }
+  })
+  
+  ///////////CLOSE BTN/////////////////
+  btnClose.addEventListener('click', function(e){
+    e.preventDefault()
+    
+    //check credentials 
+    if((inputCloseUsername.value === currentAccount.username)&&(Number(inputClosePin.value) === currentAccount.pin)) {
+      //search index of the deleted acc
+      const index = accounts.findIndex(acc => acc.username === currentAccount.username)
+      //Hide UI
+      containerApp.style.opacity = 0
+      //Delete Acount
+      accounts.splice(index, 1)
+    }
+    inputCloseTo.value = inputCloseAmount.value = " "
+    labelWelcome.textContent = "Log in to get started"
 })
 
-btnTransfer.addEventListener('click', function(e){ 
-  e.preventDefault()
-  const amount = Number(inputTransferAmount.value)
-  const reciverAcc = accounts.find(acc => acc.username === inputTransferTo.value)
-  if (amount > 0 && currentAccount.balance >= amount && reciverAcc?.username) {
 
-    //Transfer
-    currentAccount.movements.push(-amount)
-    reciverAcc.movements.push(amount)
 
-    //uptade the UI
-    updateUI(currentAccount)
-    // blank the input forms
-    inputTransferTo.value = inputTransferAmount.value = " " 
-  }
-})
+////////// Learning ///////////
 
-btnClose.addEventListener('click', function(e){
-  e.preventDefault()
+const currencies = new Map([
+  ['USD', 'United States dollar'],
+  ['EUR', 'Euro'],
+  ['GBP', 'Pound sterling'],
+]);
+// Test data
+const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const eurToUsd = 1.1
+const movementsUSD = movements.map(mov => mov = eurToUsd)
 
-  //check credentials 
-  if((inputCloseUsername.value === currentAccount.username)&&(Number(inputClosePin.value) === currentAccount.pin)) {
-    //search index of the deleted acc
-    const index = accounts.findIndex(acc => acc.username === currentAccount.username)
-    //Hide UI
-    containerApp.style.opacity = 0
-    //Delete Acount
-    accounts.splice(index, 1)
-  }
-  inputCloseTo.value = inputCloseAmount.value = " "
-  labelWelcome.textContent = "Log in to get started"
-})
+// calc all the deposits in usd
+const allDepositsUSD = function(movements){
+  return movements.filter(mov => mov > 0)
+  .map(mov => mov * eurToUsd)
+  .reduce((acc, mov) => acc + mov,0)
+}
+
+const biggestMove = movements.reduce(function(acc, cur, i) {
+  if(cur > acc) acc = cur
+  return acc
+}, movements[0])
+console.log(str)
+
+//const lastBigM = movements.indexOf(movements.findLast(mov => mov >= 2000))
+const lastBigM = movements.findLastIndex(mov => Math.abs(mov) >= 2000)
+const str = `Your last large move was ${movements.length - lastBigM -1} moves ago`

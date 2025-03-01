@@ -125,9 +125,9 @@ const createUsernames = function(accs){
 createUsernames(accounts)
 
 // calc and display balance
-const calcDisplayBalance = function(movements) {
-  const balance = movements.reduce((acc, cur) => acc + cur, 0);
-  labelBalance.textContent = `${balance} EUR`
+const calcDisplayBalance = function(acc) {
+  acc.balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
+  labelBalance.textContent = `${acc.balance}€`
 }
 
 //calc and display all summary
@@ -150,23 +150,28 @@ const displaySummary = function(acc){
 labelSumInterest.textContent = `${interest}€` 
 }
 
+//Call Displays 
+const updateUI = function(acc){
+displayMovements(acc.movements)
+calcDisplayBalance(acc)
+displaySummary(acc)}
 
-// LOGIN button
+//defines curent Account active
+let currentAccount
+
+// LOGIN button+
 btnLogin.addEventListener('click', function(e) {
   e.preventDefault();
   
- let currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
 console.log(currentAccount)
 if(currentAccount?.pin === Number(inputLoginPin.value)) {
     //show 
     containerApp.style.opacity = 100
     //clear input field
     inputLoginPin.value = inputLoginUsername.value = " "
-
-    //Call Displays
-    displayMovements(currentAccount.movements)
-    calcDisplayBalance(currentAccount.movements)
-    displaySummary(currentAccount)
+    
+    updateUI(currentAccount)
 
     // welcome messages
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
@@ -177,5 +182,31 @@ btnTransfer.addEventListener('click', function(e){
   e.preventDefault()
   const amount = Number(inputTransferAmount.value)
   const reciverAcc = accounts.find(acc => acc.username === inputTransferTo.value)
-  
+  if (amount > 0 && currentAccount.balance >= amount && reciverAcc?.username) {
+
+    //Transfer
+    currentAccount.movements.push(-amount)
+    reciverAcc.movements.push(amount)
+
+    //uptade the UI
+    updateUI(currentAccount)
+    // blank the input forms
+    inputTransferTo.value = inputTransferAmount.value = " " 
+  }
+})
+
+btnClose.addEventListener('click', function(e){
+  e.preventDefault()
+
+  //check credentials 
+  if((inputCloseUsername.value === currentAccount.username)&&(Number(inputClosePin.value) === currentAccount.pin)) {
+    //search index of the deleted acc
+    const index = accounts.findIndex(acc => acc.username === currentAccount.username)
+    //Hide UI
+    containerApp.style.opacity = 0
+    //Delete Acount
+    accounts.splice(index, 1)
+  }
+  inputCloseTo.value = inputCloseAmount.value = " "
+  labelWelcome.textContent = "Log in to get started"
 })

@@ -173,9 +173,19 @@ const updateUI = function(acc){
       //uptade the UI
       updateUI(currentAccount)
       // blank the input forms
-      inputTransferTo.value = inputTransferAmount.value = " " 
+      inputTransferTo.value = inputTransferAmount.value = "" 
     }
   })
+
+   ///////////LOAN BTN/////////////////
+   btnLoan.addEventListener('click', function(e){
+    e.preventDefault()
+    const amount = Number(inputLoanAmount.value)
+    //check if the amount is at least grater than 10% of any depoist
+    if(amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.10)) currentAccount.movements.push(amount)
+    updateUI(currentAccount)
+    inputLoanAmount.value = ''
+   })
   
   ///////////CLOSE BTN/////////////////
   btnClose.addEventListener('click', function(e){
@@ -190,7 +200,7 @@ const updateUI = function(acc){
       //Delete Acount
       accounts.splice(index, 1)
     }
-    inputCloseTo.value = inputCloseAmount.value = " "
+    inputCloseTo.value = inputCloseAmount.value = ""
     labelWelcome.textContent = "Log in to get started"
 })
 
@@ -219,8 +229,10 @@ const biggestMove = movements.reduce(function(acc, cur, i) {
   if(cur > acc) acc = cur
   return acc
 }, movements[0])
-console.log(str)
 
 //const lastBigM = movements.indexOf(movements.findLast(mov => mov >= 2000))
 const lastBigM = movements.findLastIndex(mov => Math.abs(mov) >= 2000)
 const str = `Your last large move was ${movements.length - lastBigM -1} moves ago`
+console.log(str)
+
+

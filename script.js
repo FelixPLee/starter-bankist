@@ -288,11 +288,13 @@ const recommended = function() {
   else return false
 }
 
-dogs.map(dog => dog.recFood = dog.weight ** 0.75 * 28)
+dogs.map(dog => dog.recFood = Math.trunc(dog.weight ** 0.75 * 28))
 
 const SarahsDog = dogs.find(dog => dog.owners.includes('Sarah'))
 const ownersTooMuch = dogs.filter(dog => dog.curFood > dog.recFood * 1.1).flatMap(dog => dog.owners)
 const ownersTooLittle = dogs.filter(dog => dog.curFood < dog.recFood * 0.9).flatMap(dog => dog.owners)
+const exactDogs = dogs.filter(dog => dog.curFood === dog.recFood)
+const okayDogs = dogs.filter(dog => recommended.call(dog))
 
 const ownersMuchAndLittle = `${ownersTooMuch.join(' ')}'s dogs eat too much! and ${ownersTooLittle.join(' ')}'s dogs eat too much!` 
 console.log(ownersMuchAndLittle)
@@ -300,4 +302,3 @@ console.log(recommended.call(SarahsDog))
 
 console.log(dogs.some(dog => dog.curFood === dog.recFood))
 console.log(dogs.every(dog => recommended.call(dog)))
-const okayDogs = dogs.filter(dog => recommended.call(dog))

@@ -314,11 +314,21 @@ const exactDogs = dogs.filter(dog => dog.curFood === dog.recFood)
 const okayDogs = dogs.filter(dog => recommended.call(dog))
 
 const ownersMuchAndLittle = `${ownersTooMuch.join(' ')}'s dogs eat too much! and ${ownersTooLittle.join(' ')}'s dogs eat too much!` 
-console.log(ownersMuchAndLittle)
-console.log(recommended.call(SarahsDog))
+const groupByFood = Object.groupBy(dogs, dog => {
+  if(dog.curFood < dog.recFood) return 'too-much'
+  if(dog.curFood > dog.recFood) return 'too-little'
+  if(dog.curFood === dog.recFood) return 'exact'
+})
+const gorupByOwners = Object.groupBy(dogs, dog => `${dog.owners.length}owners`)
+console.log(dogs)
+dogs.sort((a, b) => a.recFood - b.recFood)
+console.log(dogs)
 
-console.log(dogs.some(dog => dog.curFood === dog.recFood))
-console.log(dogs.every(dog => recommended.call(dog)))
+//console.log(ownersMuchAndLittle)
+//console.log(recommended.call(SarahsDog))
+
+//console.log(dogs.some(dog => dog.curFood === dog.recFood))
+//console.log(dogs.every(dog => recommended.call(dog)))
 
 
 // Coding Challenge #4
@@ -390,12 +400,11 @@ const swimmingAdjacent = breeds
 const bigGuy = breeds
 .filter(dog => dog.activities.includes('fetch'))
 .reduce((acc, curr) => Math.max(acc, curr.averageWeight), -Infinity)
+const groupAcc = Object.groupBy(accounts, acc => acc.type )
+const groupMovs = Object.groupBy(movements, movements => movements>0 ? 'deposits':'withdraws')
 //console.log(breeds.every(dog => dog.averageWeight >= 10))
 //console.log(breeds.some(dog => dog.activities.length >= 3))
+//console.log(groupMovs)
+//console.log(groupAcc)
 
 
-const groupMovs = Object.groupBy(movements, movements => movements>0 ? 'deposits':'withdraws')
-console.log(groupMovs)
-
-const groupAcc = Object.groupBy(accounts, acc => acc.type )
-console.log(groupAcc)

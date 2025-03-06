@@ -69,17 +69,21 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 
-containerMovements.innerHTML = ''
 
 //================================APLICATION================================//
 
 
 ///////////DEFINING FUNCTIONS/////////////////
 //Display movements
-const displayMovements = function(movements) {
-  movements.forEach(function(mov, i) {
-  const type = mov > 0 ? 'deposit' : 'withdrawal'
-  const html = `
+const displayMovements = function(movements, sort = false) {
+
+  containerMovements.innerHTML = ''
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements
+
+  movs.forEach(function(mov, i) {
+    const type = mov > 0 ? 'deposit' : 'withdrawal'
+    const html = `
         <div class="movements__row">
           <div class="movements__type movements__type--${type}">${i+1} ${type}</div>
           <div class="movements__date">3 days ago</div>
@@ -203,6 +207,14 @@ const updateUI = function(acc){
     inputClosePin.value = inputCloseUsername.value = ""
     labelWelcome.textContent = "Log in to get started"
 })
+
+  ///////////SORT BTN/////////////////
+  let isSorted = false
+  btnSort.addEventListener('click', function(e) {
+    e.preventDefault()
+    displayMovements(currentAccount.movements, !isSorted)
+    isSorted = !isSorted
+  })
 
 
 
@@ -375,3 +387,5 @@ const bigGuy = breeds
 .reduce((acc, curr) => Math.max(acc, curr.averageWeight), -Infinity)
 //console.log(breeds.every(dog => dog.averageWeight >= 10))
 //console.log(breeds.some(dog => dog.activities.length >= 3))
+
+

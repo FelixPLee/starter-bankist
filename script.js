@@ -316,12 +316,12 @@ const okayDogs = dogs.filter(dog => recommended.call(dog))
 const ownersMuchAndLittle = `${ownersTooMuch.join(' ')}'s dogs eat too much! and ${ownersTooLittle.join(' ')}'s dogs eat too much!` 
 const groupByFood = Object.groupBy(dogs, dog => {
   if(dog.curFood < dog.recFood) return 'too-much'
-  if(dog.curFood > dog.recFood) return 'too-little'
-  if(dog.curFood === dog.recFood) return 'exact'
+  else if(dog.curFood > dog.recFood) return 'too-little'
+  else return 'exact'
 })
-const gorupByOwners = Object.groupBy(dogs, dog => `${dog.owners.length}owners`)
+const gorupByOwners = Object.groupBy(dogs, dog => `${dog.owners.length}-owners`)
 console.log(dogs)
-dogs.sort((a, b) => a.recFood - b.recFood)
+const sortedDOgs = dogs.toSort((a, b) => a.recFood - b.recFood)
 console.log(dogs)
 
 //console.log(ownersMuchAndLittle)
